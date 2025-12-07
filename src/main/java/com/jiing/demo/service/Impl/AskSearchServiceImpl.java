@@ -15,6 +15,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -37,6 +38,12 @@ import okhttp3.Response;
 public class AskSearchServiceImpl implements AskSearchService {
 
     private static final Integer TIME_OUT = 5 * 60;
+
+    @Value("${openai.api.url}")
+    private String openaiApiUrl;
+
+    @Value("${openai.api.token}")
+    private String openaiApiToken;
 
     private RestHighLevelClient restHighLevelClient;
 
@@ -169,12 +176,12 @@ public class AskSearchServiceImpl implements AskSearchService {
 
             RequestBody body = RequestBody.create(mediaType, jsonRequestBody);
 
-            // 构建请求
+                        // 构建请求
             Request request = new Request.Builder()
-                .url("https://**/v1/chat/completions")
+                .url(openaiApiUrl)
                 .post(body)
                 .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "**")
+                .addHeader("Authorization", "Bearer " + openaiApiToken)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
@@ -248,12 +255,12 @@ public class AskSearchServiceImpl implements AskSearchService {
                 RequestBody body = RequestBody.create(mediaType, jsonRequestBody);
 
 
-                // 构建请求
+                                // 构建请求
                 Request request = new Request.Builder()
-                    .url("https://**/v1/chat/completions") // 替换为实际的 OpenAI API endpoint
+                    .url(openaiApiUrl)
                     .post(body)
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "Bearer **") // 使用你的 OpenAI API Key
+                    .addHeader("Authorization", "Bearer " + openaiApiToken)
                     .addHeader("Content-Type", "application/json")
                     .build();
 
