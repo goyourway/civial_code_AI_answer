@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.CollectionUtils;
 
 import com.jiing.demo.constants.CivilCodeConstants;
-import com.jiing.demo.constants.LawCaseConstants;
 import com.jiing.demo.thirdparty.FileRegexMatcher;
 
 public class ElasticCivilCodeTest {
@@ -44,6 +43,12 @@ public class ElasticCivilCodeTest {
         ));
     }
 
+
+    // 运行下面2个步骤插入民法数据到ES
+    /**
+     * STEP 1 运行 createCivilCodeIndex 在ES中创建民法典INDEX
+     * @throws IOException
+     */
     @Test
     void createCivilCodeIndex() throws IOException {
         // 1.创建Request对象
@@ -54,14 +59,10 @@ public class ElasticCivilCodeTest {
         client.indices().create(request, RequestOptions.DEFAULT);
     }
 
-    @Test
-    void testDeleteLawCaseIndex() throws IOException {
-        // 1.创建Request对象
-        DeleteIndexRequest request = new DeleteIndexRequest(CivilCodeConstants.INDEX_NAME);
-        // 2.发送请求
-        client.indices().delete(request, RequestOptions.DEFAULT);
-    }
-
+    /**
+     * STEP 2 运行 indexCivilCodeData 在ES中创建民法典DOCs
+     * @throws IOException
+     */
     @Test
     void indexCivilCodeData() throws IOException {
         // 1. 准备批量请求对象
@@ -93,6 +94,14 @@ public class ElasticCivilCodeTest {
             System.err.println("部分文档添加失败，失败原因：");
             System.err.println(bulkResponse.buildFailureMessage());
         }
+    }
+
+    @Test
+    void testDeleteCivilCodeIndex() throws IOException {
+        // 1.创建Request对象
+        DeleteIndexRequest request = new DeleteIndexRequest(CivilCodeConstants.INDEX_NAME);
+        // 2.发送请求
+        client.indices().delete(request, RequestOptions.DEFAULT);
     }
 
     @Test
@@ -132,15 +141,6 @@ public class ElasticCivilCodeTest {
                 }
             }
         });
-    }
-    
-
-    @Test
-    void testDeleteCivilCodeIndex() throws IOException {
-        // 1.创建Request对象
-        DeleteIndexRequest request = new DeleteIndexRequest(CivilCodeConstants.INDEX_NAME);
-        // 2.发送请求
-        client.indices().delete(request, RequestOptions.DEFAULT);
     }
 
     @AfterEach
